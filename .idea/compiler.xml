@@ -7,6 +7,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="TableMicroservice" />
+        <module name="OrderMicroservice" />
+        <module name="FoodMicroservice" />
         <module name="UserMicroservice" />
       </profile>
     </annotationProcessing>

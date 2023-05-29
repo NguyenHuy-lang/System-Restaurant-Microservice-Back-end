@@ -15,5 +15,58 @@
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <!-- MySQL JDBC driver -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.26</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>8.0.2</version>
+        </dependency>
+    </dependencies>
 
+    <build>
+        <plugins>
+            <!-- Flyway plugin -->
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>8.0.2</version>
+                <configuration>
+                    <!-- Database connection details -->
+                    <url>jdbc:mysql://localhost:3306/table</url>
+                    <user>root</user>
+                    <password>123456789</password>
+
+                    <!-- Clean schema history table on validation error -->
+                    <cleanOnValidationError>true</cleanOnValidationError>
+                </configuration>
+                <dependencies>
+                    <!-- MySQL Connector -->
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>8.0.26</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!-- Other plugins and configurations -->
+        </plugins>
+    </build>
 </project>

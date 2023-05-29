@@ -1,0 +1,1 @@
+INSERT INTO tbl_table(ID, name, capacity, status) VALUES (1, "TSDV1", 12, "PENDING")
