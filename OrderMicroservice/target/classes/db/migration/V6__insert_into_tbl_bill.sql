@@ -1,0 +1,1 @@
+INSERT INTO tbl_bill(ID, payment_time, payment_method, booking_id) VALUES (1, NOW(), "PAYPAL", 1);

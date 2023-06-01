@@ -13,5 +13,10 @@
         <module name="UserMicroservice" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="core" target="19" />
+      <module name="Library" target="19" />
+      <module name="untitled" target="19" />
+    </bytecodeTargetLevel>
   </component>
 </project>
