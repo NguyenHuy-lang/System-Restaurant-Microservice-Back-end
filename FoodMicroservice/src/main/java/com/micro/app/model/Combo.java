@@ -19,7 +19,6 @@ public class Combo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @OneToOne
-    @Column(name = "foodId")
     private Food food;
     @OneToMany
     @Column(name = "comboId")

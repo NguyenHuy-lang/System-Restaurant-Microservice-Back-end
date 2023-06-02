@@ -15,6 +15,6 @@ public class Dish {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @OneToOne
-    @Column(name = "foodId")
+//    @Column(name = "foodId")
     private Food food;
 }

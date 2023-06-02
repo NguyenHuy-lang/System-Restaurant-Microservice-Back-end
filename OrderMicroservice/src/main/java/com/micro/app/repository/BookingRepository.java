@@ -11,8 +11,11 @@ import org.springframework.stereotype.Repository;
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Modifying
     @Query(value = "INSERT INTO tbl_order" +
-            "(createDate, " + "status, customerID) VALUES " +
+            "(createDate, status, customerID) VALUES " +
             "(CURRENT_TIMESTAMP, 'pending', " +
             ":customerID)", nativeQuery = true)
     public void createBookingForUser(@Param("customerID") Integer userId);
+
+    @Query(value = "INSERT INTO tbl_booked_table")
+    public void addTableToBookingForUser();
 }

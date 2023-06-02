@@ -47,4 +47,10 @@ public class TableController {
             return ResponseEntity.ok().body(tableRepository.findByCapacity(number));
         }
     }
+    @PostMapping
+    ResponseEntity<Table> addTable(@RequestBody Table table) {
+        Table tab = new Table(table.getId(), table.getName(), "PENDING", table.getCapacity());
+        tableRepository.save(tab);
+        return ResponseEntity.ok().body(table);
+    }
 }
