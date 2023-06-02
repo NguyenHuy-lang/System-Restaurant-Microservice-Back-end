@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table(name = "tbl_order")
+@Table(name = "tbl_booking")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,10 +19,10 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @OneToMany
-    @Column(name = "booking_id")
+    @JoinColumn(name = "booking_id")
     private List<BookedTable> bookedTableList;
     private Date checkIn;
-    @Column(name = "customer_id")
+    @Transient
     private Customer customer;
     private String status;
 

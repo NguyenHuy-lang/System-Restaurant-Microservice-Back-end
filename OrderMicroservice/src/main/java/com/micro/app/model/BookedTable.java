@@ -15,9 +15,9 @@ public class BookedTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "food_id")
+    @Transient
     private Table table;
     @OneToMany
-    @Column(name = "booked_table_id")
+    @JoinColumn(name = "booked_table_id")
     private List<DetailFood> detailFoodList;
 }
