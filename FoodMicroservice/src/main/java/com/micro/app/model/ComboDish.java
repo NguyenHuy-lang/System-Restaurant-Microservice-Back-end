@@ -12,7 +12,7 @@ public class ComboDish {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @ManyToOne
-//    @Column(name = "dishId")
+    @JoinColumn(name = "dishId")
     private Dish dish;
     private Integer quantity;
 }

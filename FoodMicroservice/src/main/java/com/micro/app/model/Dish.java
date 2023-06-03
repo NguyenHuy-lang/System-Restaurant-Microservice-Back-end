@@ -10,11 +10,12 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
+@Table(name = "tbl_dish")
 public class Dish {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @OneToOne
-//    @Column(name = "foodId")
+    @JoinColumn(name = "foodId")
     private Food food;
 }
