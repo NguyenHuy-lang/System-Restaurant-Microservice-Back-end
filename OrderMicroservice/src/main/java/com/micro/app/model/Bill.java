@@ -18,7 +18,7 @@ public class Bill {
     private Integer id;
     private Date timePayment;
     @OneToOne
-    @Column(name = "booking_id")
+//    @Column(name = "booking_id")
     private Booking booking;
     private Integer totalMonney;
     private String paymentMethod;

@@ -38,5 +38,32 @@
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
     </properties>
+    <build>
+        <plugins>
+            <!-- Flyway plugin -->
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>8.0.2</version>
+                <configuration>
+                    <!-- Database connection details -->
+                    <url>jdbc:mysql://localhost:3306/db_food</url>
+                    <user>root</user>
+                    <password>root</password>
 
+                    <!-- Clean schema history table on validation error -->
+                    <cleanOnValidationError>true</cleanOnValidationError>
+                </configuration>
+                <dependencies>
+                    <!-- MySQL Connector -->
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>8.0.26</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!-- Other plugins and configurations -->
+        </plugins>
+    </build>
 </project>

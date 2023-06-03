@@ -18,6 +18,6 @@ public class BookedTable {
     @Column(name = "food_id")
     private Table table;
     @OneToMany
-    @Column(name = "booked_table_id")
+//    @Column(name = "booked_table_id")
     private List<DetailFood> detailFoodList;
 }

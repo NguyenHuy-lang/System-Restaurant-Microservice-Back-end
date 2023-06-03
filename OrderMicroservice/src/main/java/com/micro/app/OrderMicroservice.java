@@ -1,4 +1,4 @@
-package com.micro.app.application;
+package com.micro.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
