@@ -17,7 +17,7 @@ public class DetailFood {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Integer quantity;
-    @Column(name = "food_id")
+    @Transient
     private Food food;
     private Integer price;
 }

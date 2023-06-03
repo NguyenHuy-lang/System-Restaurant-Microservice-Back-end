@@ -10,15 +10,15 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "tbl_table")
+@Table(name = "tbl_bill")
 @Builder
 public class Bill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Date timePayment;
-    @OneToOne
-//    @Column(name = "booking_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "booking_id")
     private Booking booking;
     private Integer totalMonney;
     private String paymentMethod;

@@ -9,6 +9,7 @@ import lombok.*;
 @Data
 @Builder
 public class Customer {
+    private User user;
     private String phone;
     private String address;
 }
