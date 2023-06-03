@@ -21,7 +21,7 @@ public class Combo {
     @OneToOne
     private Food food;
     @OneToMany
-    @Column(name = "comboId")
+    @JoinColumn(name = "comboId")
     private List<ComboDish> comboDishList;
 
 }

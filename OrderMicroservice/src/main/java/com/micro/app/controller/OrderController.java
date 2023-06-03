@@ -2,10 +2,7 @@ package com.micro.app.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.micro.app.api.RestApi;
-import com.micro.app.model.Booking;
-import com.micro.app.model.Food;
-import com.micro.app.model.Table;
-import com.micro.app.model.User;
+import com.micro.app.model.*;
 import com.micro.app.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -22,6 +19,7 @@ import javax.transaction.Transactional;
 import java.awt.print.Book;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 @RestController
@@ -95,36 +93,68 @@ public class OrderController {
         return ResponseEntity.ok().build();
     }
     @GetMapping("/customer/{email}/pending")
-    ResponseEntity<List<Booking>> getBookingEverReceiveOfCustomer
+    ResponseEntity<Booking> getBookingEverReceiveOfCustomer
             (@PathVariable(name = "email") String email, HttpServletRequest request){
         String accessToken = request.getHeader("Authorization");
-        // Process the access token
         if (accessToken != null && accessToken.startsWith("Bearer ")) {
-            // Remove the "Bearer " prefix from the token
             accessToken = accessToken.substring(7);
-            // Print the access token
             System.out.println("Access Token: " + accessToken);
         }
         User user = restApi.getUserRequest(email);
         List<Map<String, Object>> v = bookingRepository.
                 getBookingPendingOfCustomer(user.getId());
+        User userOfBooking = new User();
+        Customer customer = new Customer();
+        customer.setUser(userOfBooking);
+        Integer id = (int) v.get(0).get("Id");
+        Date createDateAsDate = new Date(((Timestamp) v.get(0).get("create_date")).getTime());
+        String status = (String) v.get(0).get("status");
+        Booking booking = Booking.builder()
+                                            .id(id)
+                                            .createDate(createDateAsDate)
+                                            .status(status)
+                                            .customer(customer).build();
+        booking.setBookedTableList(new ArrayList<>());
         for (Map<String, Object> row : v) {
-            Integer id = (int) row.get("Id");
-            Date createDateAsDate = new Date(((Timestamp) row.get("create_date")).getTime());
-            String status = (String) row.get("status");
             Integer customerId = (int) row.get("customer_id");
             Integer BookingId = (int) row.get("booking_id");
             Integer table_id = (int) row.get("table_id");
             Integer food_id = (int) row.get("food_id");
             Integer quantity = (int) row.get("quantity");
             Integer price = (int) row.get("price");
-            User userOfBooking = restApi.getUserByIdFromUserMicroservice(customerId, accessToken);
+            if(userOfBooking == null) userOfBooking = restApi.getUserByIdFromUserMicroservice(customerId, accessToken);
             Table tableOfBooking = restApi.getTableByIdFromTableMicroservice(table_id);
             Food food = restApi.getFoodByIdFromMicroservice(food_id);
-
+            DetailFood detailFood = DetailFood.builder()
+                                                .food(food)
+                                                .price(price)
+                                                .quantity(quantity)
+                                                .build();
+            boolean find = false;
+            for (BookedTable bookedTable : booking.getBookedTableList()) {
+                if(bookedTable.getTable().getId() == tableOfBooking.getId()) {
+                    find = true;
+                    if(bookedTable.getDetailFoodList() == null) {
+                        bookedTable.setDetailFoodList(new ArrayList<>());
+                    }
+                    bookedTable.getDetailFoodList().add(detailFood);
+                    break;
+                } else {
+                    // donothing
+                }
+            }
+            if (find == false) {
+                BookedTable bookedTable = BookedTable.builder()
+                        .table(tableOfBooking)
+                        .detailFoodList(new ArrayList<>()).build();
+                bookedTable.getDetailFoodList().add(detailFood);
+                booking.getBookedTableList().add(bookedTable);
+            }
         }
 
-        return null;
+
+
+        return ResponseEntity.ok().body(booking);
     }
 
 

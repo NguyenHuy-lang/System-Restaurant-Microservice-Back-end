@@ -50,7 +50,7 @@
                 <version>8.0.2</version>
                 <configuration>
                     <!-- Database connection details -->
-                    <url>jdbc:mysql://restaurantdb.cmehtetfmzdc.ap-southeast-1.rds.amazonaws.com:3306/db_table</url>
+                    <url>jdbc:mysql://localhost:3306/table</url>
                     <user>root</user>
                     <password>123456789</password>
 

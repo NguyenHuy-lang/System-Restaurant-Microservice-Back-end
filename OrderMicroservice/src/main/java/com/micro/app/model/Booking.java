@@ -25,5 +25,6 @@ public class Booking {
     @Transient
     private Customer customer;
     private String status;
+    private Date createDate;
 
 }
