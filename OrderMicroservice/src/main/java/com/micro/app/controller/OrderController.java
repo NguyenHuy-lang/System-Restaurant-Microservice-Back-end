@@ -1,7 +1,10 @@
 package com.micro.app.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.micro.app.api.RestApi;
+import com.micro.app.model.Booking;
 import com.micro.app.model.Food;
+import com.micro.app.model.Table;
 import com.micro.app.model.User;
 import com.micro.app.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,11 +12,17 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.*;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.awt.print.Book;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.List;
 import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/bookings")
@@ -22,29 +31,12 @@ import java.util.Map;
 @Transactional
 public class OrderController {
     private final BookingRepository bookingRepository;
+    private RestApi restApi = new RestApi();
     // api tao booking cho khach hang
-    public User getUserRequest(Authentication authentication){
-        String email = ((UserDetails) authentication.getPrincipal()).getUsername();
-        RestTemplate restTemplate = new RestTemplate();
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        restTemplate.getMessageConverters().add(converter);
-        String url = "http://localhost:8080/api/v1/auth/infor";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode requestBody = objectMapper.createObjectNode();
-        requestBody.put("email", email);
-        String requestBodyString = requestBody.toString();
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBodyString, headers);
-        ResponseEntity<User> responseEntity =
-                restTemplate.postForEntity(url, requestEntity, User.class);
 
-        User user = responseEntity.getBody();
-        return user;
-    }
     @PostMapping("/")
     ResponseEntity<Void> createBookingForUser(Authentication authentication) {
-        User user = getUserRequest(authentication);
+        User user = restApi.getUserRequest(authentication);
         bookingRepository.createBookingForUser(user.getId());
         return ResponseEntity.ok().build();
     }
@@ -102,4 +94,38 @@ public class OrderController {
         bookingRepository.deleteFoodToTableToBookingForUser(bookedTableId, foodId);
         return ResponseEntity.ok().build();
     }
+    @GetMapping("/customer/{email}/pending")
+    ResponseEntity<List<Booking>> getBookingEverReceiveOfCustomer
+            (@PathVariable(name = "email") String email, HttpServletRequest request){
+        String accessToken = request.getHeader("Authorization");
+        // Process the access token
+        if (accessToken != null && accessToken.startsWith("Bearer ")) {
+            // Remove the "Bearer " prefix from the token
+            accessToken = accessToken.substring(7);
+            // Print the access token
+            System.out.println("Access Token: " + accessToken);
+        }
+        User user = restApi.getUserRequest(email);
+        List<Map<String, Object>> v = bookingRepository.
+                getBookingPendingOfCustomer(user.getId());
+        for (Map<String, Object> row : v) {
+            Integer id = (int) row.get("Id");
+            Date createDateAsDate = new Date(((Timestamp) row.get("create_date")).getTime());
+            String status = (String) row.get("status");
+            Integer customerId = (int) row.get("customer_id");
+            Integer BookingId = (int) row.get("booking_id");
+            Integer table_id = (int) row.get("table_id");
+            Integer food_id = (int) row.get("food_id");
+            Integer quantity = (int) row.get("quantity");
+            Integer price = (int) row.get("price");
+            User userOfBooking = restApi.getUserByIdFromUserMicroservice(customerId, accessToken);
+            Table tableOfBooking = restApi.getTableByIdFromTableMicroservice(table_id);
+            Food food = restApi.getFoodByIdFromMicroservice(food_id);
+
+        }
+
+        return null;
+    }
+
+
 }

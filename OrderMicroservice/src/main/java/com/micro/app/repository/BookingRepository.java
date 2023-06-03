@@ -7,6 +7,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
@@ -57,4 +59,15 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query(value = "DELETE FROM tbl_detail_food tmp WHERE tmp.booked_table_id = :bookedTableId and tmp.food_id = :foodId", nativeQuery = true)
     public int deleteFoodToTableToBookingForUser(@Param("bookedTableId") Integer bookedTableId,
                                                   @Param("foodId") Integer foodId);
+    @Modifying
+    @Query(value = "SELECT a.Id, a.create_date , a.status, a.customer_id, " +
+            "b.booking_id , b.table_id, c.food_id, c.quantity, c.price " +
+            " from tbl_booking a" +
+            " JOIN tbl_booked_table b" +
+            " JOIN tbl_detail_food c" +
+            " ON a.ID = b.booking_id and b.ID = c.booked_table_id " +
+            " where a.customer_id = :customerId", nativeQuery = true)
+    @Transactional
+    List<Map<String, Object>> getBookingPendingOfCustomer
+            (@Param("customerId")Integer customerId);
 }
