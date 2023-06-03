@@ -1,27 +1,50 @@
 package com.micro.app.controller;
-
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.micro.app.model.Food;
+import com.micro.app.model.User;
 import com.micro.app.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.transaction.Transactional;
 import java.util.Map;
-
-
 @RestController
 @RequestMapping("/api/v1/bookings")
 @RequiredArgsConstructor
+@CrossOrigin
 public class OrderController {
     private final BookingRepository bookingRepository;
     // api tao booking cho khach hang
+    public User getUserRequest(Authentication authentication){
+        String email = ((UserDetails) authentication.getPrincipal()).getUsername();
+        RestTemplate restTemplate = new RestTemplate();
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        restTemplate.getMessageConverters().add(converter);
+        String url = "http://localhost:8080/api/v1/auth/infor";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode requestBody = objectMapper.createObjectNode();
+        requestBody.put("email", email);
+        String requestBodyString = requestBody.toString();
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBodyString, headers);
+        ResponseEntity<User> responseEntity =
+                restTemplate.postForEntity(url, requestEntity, User.class);
+
+        User user = responseEntity.getBody();
+        return user;
+    }
     @PostMapping("/")
-    ResponseEntity<Void> createBookingForUser() {
-        Integer userId = 2;
-        bookingRepository.createBookingForUser(userId);
+    @Transactional
+    ResponseEntity<Void> createBookingForUser(Authentication authentication) {
+        User user = getUserRequest(authentication);
+        bookingRepository.createBookingForUser(user.getId());
         return ResponseEntity.ok().build();
     }
 
@@ -58,7 +81,7 @@ public class OrderController {
         }
         return ResponseEntity.notFound().build();
     }
-    @PostMapping("/{bookingId}/tables/{tableId}/foods/{foodId}")
+    @PutMapping("/{bookingId}/tables/{tableId}/foods/{foodId}")
     ResponseEntity<Void> updateQuantityFoodToTableToBookingForUser(@PathVariable(name = "bookingId") Integer bookingId,
                                                                    @PathVariable(name = "tableId") Integer tableId,
                                                                    @PathVariable(name = "foodId") Integer foodId,
