@@ -5,6 +5,7 @@ import com.micro.app.model.Food;
 import com.micro.app.model.User;
 import com.micro.app.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.*;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/bookings")
 @RequiredArgsConstructor
 @CrossOrigin
+@Transactional
 public class OrderController {
     private final BookingRepository bookingRepository;
     // api tao booking cho khach hang
@@ -41,7 +43,6 @@ public class OrderController {
         return user;
     }
     @PostMapping("/")
-    @Transactional
     ResponseEntity<Void> createBookingForUser(Authentication authentication) {
         User user = getUserRequest(authentication);
         bookingRepository.createBookingForUser(user.getId());
@@ -69,7 +70,7 @@ public class OrderController {
                                                         @PathVariable(name = "foodId") Integer foodId,
                                                         @RequestBody Map<String, Integer> request) {
         Integer quantity = request.get("quantity");
-        String url = "localhost:8082/api/v1/foods/" + foodId;
+        String url = "http://localhost:8082/api/v1/foods/" + foodId;
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Food> response = restTemplate.getForEntity(url, Food.class);
         if (response.getStatusCode() == HttpStatus.OK) {
@@ -92,7 +93,6 @@ public class OrderController {
         bookingRepository.updateFoodToTableToBookingForUser(bookedTableId, foodId, quantity);
         return ResponseEntity.ok().build();
     }
-
 
     @DeleteMapping("/{bookingId}/tables/{tableId}/foods/{foodId}")
     ResponseEntity<Void> deleteFoodToTableToBookingForUser(@PathVariable(name = "bookingId") Integer bookingId,
