@@ -12,6 +12,7 @@
       <schema-mapping>
         <introspection-scope>
           <node kind="schema">
+            <name qname="db_user" />
             <name qname="db_food" />
             <name qname="db_order" />
             <name qname="db_table" />
