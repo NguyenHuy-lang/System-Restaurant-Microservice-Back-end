@@ -71,7 +71,7 @@
                 <version>8.0.2</version>
                 <configuration>
                     <!-- Database connection details -->
-                    <url>jdbc:mysql://localhost:3306/db_table</url>
+                    <url>jdbc:mysql://localhost:3306/db_user</url>
                     <user>root</user>
                     <password>root</password>
 
