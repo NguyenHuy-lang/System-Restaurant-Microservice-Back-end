@@ -92,70 +92,74 @@ public class OrderController {
         bookingRepository.deleteFoodToTableToBookingForUser(bookedTableId, foodId);
         return ResponseEntity.ok().build();
     }
+
     @GetMapping("/customer/{email}/pending")
-    ResponseEntity<Booking> getBookingEverReceiveOfCustomer
-            (@PathVariable(name = "email") String email, HttpServletRequest request){
+    ResponseEntity<List<Booking>> getListBookingsByCustomerEmail(@PathVariable(name = "email") String email, HttpServletRequest request) {
         String accessToken = request.getHeader("Authorization");
         if (accessToken != null && accessToken.startsWith("Bearer ")) {
             accessToken = accessToken.substring(7);
             System.out.println("Access Token: " + accessToken);
         }
         User user = restApi.getUserRequest(email);
-        List<Map<String, Object>> v = bookingRepository.
-                getBookingPendingOfCustomer(user.getId());
-        User userOfBooking = new User();
-        Customer customer = new Customer();
-        customer.setUser(userOfBooking);
-        Integer id = (int) v.get(0).get("Id");
-        Date createDateAsDate = new Date(((Timestamp) v.get(0).get("create_date")).getTime());
-        String status = (String) v.get(0).get("status");
-        Booking booking = Booking.builder()
-                                            .id(id)
-                                            .createDate(createDateAsDate)
-                                            .status(status)
-                                            .customer(customer).build();
-        booking.setBookedTableList(new ArrayList<>());
-        for (Map<String, Object> row : v) {
+        List<Map<String, Object>> bookingData = bookingRepository.getBookingPendingOfCustomer(user.getId());
+        List<Booking> bookings = new ArrayList<>();
+
+        for (Map<String, Object> row : bookingData) {
+            Integer id = (int) row.get("Id");
+            Date createDateAsDate = new Date(((Timestamp) row.get("create_date")).getTime());
+            String status = (String) row.get("status");
+
+            Booking booking = Booking.builder()
+                    .id(id)
+                    .createDate(createDateAsDate)
+                    .status(status)
+                    .customer(new Customer())
+                    .build();
+            booking.setBookedTableList(new ArrayList<>());
+
             Integer customerId = (int) row.get("customer_id");
-            Integer BookingId = (int) row.get("booking_id");
-            Integer table_id = (int) row.get("table_id");
-            Integer food_id = (int) row.get("food_id");
+            Integer bookingId = (int) row.get("booking_id");
+            Integer tableId = (int) row.get("table_id");
+            Integer foodId = (int) row.get("food_id");
             Integer quantity = (int) row.get("quantity");
             Integer price = (int) row.get("price");
-            if(userOfBooking == null) userOfBooking = restApi.getUserByIdFromUserMicroservice(customerId, accessToken);
-            Table tableOfBooking = restApi.getTableByIdFromTableMicroservice(table_id);
-            Food food = restApi.getFoodByIdFromMicroservice(food_id);
+
+            User userOfBooking = restApi.getUserByIdFromUserMicroservice(customerId, accessToken);
+            Table tableOfBooking = restApi.getTableByIdFromTableMicroservice(tableId);
+            Food food = restApi.getFoodByIdFromMicroservice(foodId);
             DetailFood detailFood = DetailFood.builder()
-                                                .food(food)
-                                                .price(price)
-                                                .quantity(quantity)
-                                                .build();
-            boolean find = false;
+                    .food(food)
+                    .price(price)
+                    .quantity(quantity)
+                    .build();
+
+            boolean foundTable = false;
             for (BookedTable bookedTable : booking.getBookedTableList()) {
-                if(bookedTable.getTable().getId() == tableOfBooking.getId()) {
-                    find = true;
-                    if(bookedTable.getDetailFoodList() == null) {
+                if (bookedTable.getTable().getId() == tableOfBooking.getId()) {
+                    foundTable = true;
+                    if (bookedTable.getDetailFoodList() == null) {
                         bookedTable.setDetailFoodList(new ArrayList<>());
                     }
                     bookedTable.getDetailFoodList().add(detailFood);
                     break;
-                } else {
-                    // donothing
                 }
             }
-            if (find == false) {
+
+            if (!foundTable) {
                 BookedTable bookedTable = BookedTable.builder()
                         .table(tableOfBooking)
-                        .detailFoodList(new ArrayList<>()).build();
+                        .detailFoodList(new ArrayList<>())
+                        .build();
                 bookedTable.getDetailFoodList().add(detailFood);
                 booking.getBookedTableList().add(bookedTable);
             }
+
+            bookings.add(booking);
         }
 
-
-
-        return ResponseEntity.ok().body(booking);
+        return ResponseEntity.ok().body(bookings);
     }
+
 
 
 }
