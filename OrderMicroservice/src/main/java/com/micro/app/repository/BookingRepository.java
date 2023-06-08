@@ -70,4 +70,11 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Transactional
     List<Map<String, Object>> getBookingPendingOfCustomer
             (@Param("customerId")Integer customerId);
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE tbl_booking tmp " +
+            "SET tmp.status = :status where " +
+            "tmp.id = :bookingId ", nativeQuery = true)
+    int updateStatusBooking(@Param("bookingId") Integer bookingId,
+                                    @Param("status") String status);
 }
