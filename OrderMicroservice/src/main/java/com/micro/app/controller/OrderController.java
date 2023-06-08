@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -36,19 +37,7 @@ public class OrderController {
     // api tao booking cho khach hang
     @Autowired
     private EntityManager entityManager;
-    public Booking getLatestBookingByCustomer(Integer customerId) {
-        Query query = entityManager.createNativeQuery("SELECT * FROM tbl_booking " +
-                        "WHERE customer_id = :customerId " +
-                        "ORDER BY create_date DESC LIMIT 1", Booking.class)
-                .setParameter("customerId", customerId);
 
-        List<Booking> bookings = query.getResultList();
-        if (!bookings.isEmpty()) {
-            return bookings.get(0);
-        }
-
-        return null; // Return null if no booking found
-    }
     @PostMapping("/")
     ResponseEntity<Booking> createBookingForUser(Authentication authentication) {
         User user = restApi.getUserRequest(authentication);
@@ -59,10 +48,14 @@ public class OrderController {
 
     // api them ban an vao booking
     @PostMapping("/{bookingId}/tables/{tableId}")
-    ResponseEntity<Void> addTableToBookingForUser(@PathVariable(name = "bookingId") Integer bookingId,
+    ResponseEntity<Table> addTableToBookingForUser(@PathVariable(name = "bookingId") Integer bookingId,
                                                   @PathVariable(name = "tableId") Integer tableId) {
+        Integer found = bookingRepository.selectTableToBookingForUser(bookingId, tableId);
+        if (found != null) {
+            return ResponseEntity.badRequest().build();
+        }
         bookingRepository.addTableToBookingForUser(bookingId, tableId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(restApi.getTableByIdFromTableMicroservice(tableId));
     }
     // api xoa table khoi booking
     @DeleteMapping("/{bookingId}/tables/{tableId}")
@@ -72,7 +65,7 @@ public class OrderController {
         return ResponseEntity.ok().build();
     }
     @PostMapping("/{bookingId}/tables/{tableId}/foods/{foodId}")
-    ResponseEntity<Void> addFoodToTableToBookingForUser(@PathVariable(name = "bookingId") Integer bookingId,
+    ResponseEntity<DetailFood> addFoodToTableToBookingForUser(@PathVariable(name = "bookingId") Integer bookingId,
                                                         @PathVariable(name = "tableId") Integer tableId,
                                                         @PathVariable(name = "foodId") Integer foodId,
                                                         @RequestBody Map<String, Integer> request) {
@@ -85,7 +78,9 @@ public class OrderController {
             // Do something with the array of Food objects
             Integer bookedTableId = bookingRepository.getBookedTableId(bookingId, tableId);
             bookingRepository.addFoodToTableToBookingForUser(bookedTableId, foodId, food.getPrice(), quantity);
-            return ResponseEntity.ok().build();
+            Integer detailFoodId = getLatestFoodInTableBooking(bookedTableId, foodId);
+            DetailFood detailFood = DetailFood.builder().food(food).quantity(quantity).id(detailFoodId).price(food.getPrice()).build();
+            return ResponseEntity.ok().body(detailFood);
         }
         return ResponseEntity.notFound().build();
     }
@@ -173,6 +168,42 @@ public class OrderController {
 
         return ResponseEntity.ok().body(booking);
     }
+    public Booking getLatestBookingByCustomer(Integer customerId) {
+        Query query = entityManager.createNativeQuery("SELECT * FROM tbl_booking " +
+                        "WHERE customer_id = :customerId " +
+                        "ORDER BY create_date DESC LIMIT 1", Booking.class)
+                .setParameter("customerId", customerId);
 
+        List<Booking> bookings = query.getResultList();
+        if (!bookings.isEmpty()) {
+            return bookings.get(0);
+        }
+
+        return null; // Return null if no booking found
+    }
+
+    public Integer getLatestFoodInTableBooking(Integer bookedTableId, Integer foodId ) {
+        Integer result = null;
+
+        try {
+            String sql = "SELECT a.ID FROM tbl_detail_food a " +
+                    "WHERE a.booked_table_id = :bookedTableId AND a.food_id = :foodId " +
+                    "ORDER BY ID DESC LIMIT 1";
+
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter("bookedTableId", bookedTableId);
+            query.setParameter("foodId", foodId);
+
+            result = (Integer) query.getSingleResult();
+            return result;
+        } catch (NoResultException e) {
+            // Handle no result found
+        } catch (Exception e) {
+            // Handle other exceptions
+        }
+        return null;
+// Use the result as needed
+
+    }
 
 }

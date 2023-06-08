@@ -1,4 +1,5 @@
 package com.micro.app.repository;
+import com.micro.app.model.BookedTable;
 import com.micro.app.model.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,6 +20,14 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "(CURRENT_TIMESTAMP, 'pending', " +
             ":customerID)", nativeQuery = true)
     public int createBookingForUser(@Param("customerID") Integer userId);
+
+
+    @Transactional
+    @Query(value = "SELECT a.ID FROM tbl_booked_table a " +
+            "where a.booking_id = :bookingId and a.table_id = :tableId", nativeQuery = true)
+    public Integer selectTableToBookingForUser(@Param("bookingId") Integer booking_id,
+                                                   @Param("tableId") Integer table_id);
+
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO tbl_booked_table(booking_id, table_id) values " +
