@@ -12,6 +12,12 @@
     <artifactId>OrderMicroservice</artifactId>
     <dependencies>
         <dependency>
+            <groupId>com.paypal.sdk</groupId>
+            <artifactId>rest-api-sdk</artifactId>
+            <version>1.4.2</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
@@ -75,9 +81,9 @@
                 <version>8.0.2</version>
                 <configuration>
                     <!-- Database connection details -->
-                    <url>jdbc:mysql://localhost:3306/order</url>
+                    <url>jdbc:mysql://localhost:3306/db_order</url>
                     <user>root</user>
-                    <password>123456789</password>
+                    <password>root</password>
 
                     <!-- Clean schema history table on validation error -->
                     <cleanOnValidationError>true</cleanOnValidationError>

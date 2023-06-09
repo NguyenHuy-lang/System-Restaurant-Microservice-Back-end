@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="db_table@restaurantdb.cmehtetfmzdc.ap-southeast-1.rds.amazonaws.com" uuid="c5dc4234-402b-4426-a905-f60e69f88187">
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://restaurantdb.cmehtetfmzdc.ap-southeast-1.rds.amazonaws.com:3306/db_table</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
     <data-source source="LOCAL" name="@localhost" uuid="43d35694-1a4a-4ac4-b029-23c9d144d990">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>

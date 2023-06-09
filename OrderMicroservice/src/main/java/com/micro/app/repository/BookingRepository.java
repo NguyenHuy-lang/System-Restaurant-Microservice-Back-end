@@ -13,6 +13,8 @@ import java.util.Map;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
+    @Query(value = "SELECT * FROM tbl_booking a where a.customer_id =:customerId", nativeQuery = true)
+    public List<Booking> getBookingOfCustomer(@Param("customerId") Integer customerId);
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO tbl_booking" +
@@ -27,6 +29,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "where a.booking_id = :bookingId and a.table_id = :tableId", nativeQuery = true)
     public Integer selectTableToBookingForUser(@Param("bookingId") Integer booking_id,
                                                    @Param("tableId") Integer table_id);
+
+
 
     @Transactional
     @Modifying
@@ -46,6 +50,9 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "tmp.booking_id = :bookingId and tmp.table_id = :tableId LIMIT 1", nativeQuery = true)
     public Integer getBookedTableId(@Param("bookingId") Integer bookingId,
                                     @Param("tableId") Integer tableId);
+
+    @Query(value = "SELECT a.ID FROM tbl_detail_food a WHERE a.booked_table_id = :bookedTableId AND a.food_id = :foodId", nativeQuery = true)
+    public Integer existFoodInTable(@Param("bookedTableId") Integer bookedTableId, @Param("foodId") Integer foodId);
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO tbl_detail_food(booked_table_id, food_id, quantity, price) " +
@@ -54,6 +61,11 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
                                                @Param("foodId") Integer foodId,
                                                @Param("price") Integer price,
                                                @Param("quantity")Integer quantity);
+    @Query(value = "SELECT a.table_id FROM tbl_booked_table a WHERE a.booking_id = :bookingId", nativeQuery = true)
+    public List<Integer> getListTableId(@Param("bookingId") Integer bookingId);
+    @Query(value = "SELECT a.ID, a.food_id , a.price, a.quantity FROM tbl_detail_food a WHERE a.booked_table_id = :bookedTableId", nativeQuery = true)
+    public List<Map<String, Object>> getListFoodOfTable(@Param("bookedTableId") Integer bookedTableId);
+
     @Transactional
     @Modifying
     @Query(value = "UPDATE tbl_detail_food tmp " +
@@ -79,4 +91,22 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Transactional
     List<Map<String, Object>> getBookingPendingOfCustomer
             (@Param("customerId")Integer customerId);
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE tbl_booking tmp " +
+            "SET tmp.status = :status where " +
+            "tmp.id = :bookingId ", nativeQuery = true)
+    int updateStatusBooking(@Param("bookingId") Integer bookingId,
+                                    @Param("status") String status);
+    @Query(value = "SELECT a.table_id FROM tbl_booked_table a WHERE a.ID = :bookedTableId", nativeQuery = true)
+    int getTableIdByBookedTableId(@Param("bookedTableId") Integer bookedTableId);
+
+    @Query(value = "SELECT a.food_id FROM tbl_detail_food a WHERE a.ID = :detailFoodId", nativeQuery = true)
+    int getFoodByDetailFoodId(@Param("detailFoodId") Integer detailFoodId);
+
+    @Query(value = "SELECT a.quantity FROM tbl_detail_food a WHERE a.ID = :detailFoodId", nativeQuery = true)
+    int getQuantityByDetailFoodId(@Param("detailFoodId") Integer detailFoodId);
+
+    @Query(value = "SELECT a.price FROM tbl_detail_food a WHERE a.ID = :detailFoodId", nativeQuery = true)
+    int getPriceByDetailFoodId(@Param("detailFoodId") Integer detailFoodId);
 }

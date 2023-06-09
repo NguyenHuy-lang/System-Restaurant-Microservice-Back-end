@@ -25,6 +25,9 @@ public class Booking {
     @Transient
     private Customer customer;
     private String status;
+    @Column(name = "create_date")
     private Date createDate;
+    @Transient
+    private Integer total;
 
 }
