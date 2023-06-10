@@ -80,8 +80,14 @@ public class OrderController {
     @GetMapping("/")
     ResponseEntity<List<Booking>> getAllBookingForUser(Authentication authentication) {
         User user = restApi.getUserRequest(authentication);
-        return ResponseEntity.ok().body(bookingRepository
-                .getBookingOfCustomer(user.getId()));
+        List<Booking> bookingList = bookingRepository.getBookingOfCustomer(user.getId());
+        List<Booking> result = new ArrayList<>();
+        bookingList.stream().forEach(booking -> {
+            if (booking.getStatus().equals("pending")) {
+                result.add(booking);
+            }
+        });
+        return ResponseEntity.ok().body(result);
     }
 
     @PostMapping("/")
@@ -305,6 +311,7 @@ public class OrderController {
 
             // Update the status
             booking.get().setStatus(updateStatusRequest.getStatus());
+            booking.get().setCheckIn(new Date());
 
 
             // Return a success response
@@ -353,7 +360,7 @@ public class OrderController {
     }
     private boolean isValidStatus(String status) {
         // Define the list of valid status options
-        List<String> validStatusOptions = Arrays.asList("pending", "confirmed", "paid", "cancelled");
+        List<String> validStatusOptions = Arrays.asList("pending", "received", "payment");
 
         // Check if the provided status is in the list of valid options
         return validStatusOptions.contains(status);
