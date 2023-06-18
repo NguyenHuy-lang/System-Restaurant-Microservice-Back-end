@@ -12,7 +12,7 @@
     <module>UserMicroservice</module>
     <module>TableMicroservice</module>
     <module>OrderMicroservice</module>
-    <module>FoodMicroservice</module>
+    <module>FoodMicro</module>
   </modules>
 
   <name>restaurant</name>

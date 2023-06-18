@@ -9,7 +9,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="TableMicroservice" />
         <module name="OrderMicroservice" />
-        <module name="FoodMicroservice" />
         <module name="FoodMIcro" />
         <module name="UserMicroservice" />
         <module name="RestaurantEurekaService" />
@@ -17,6 +16,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="core" target="19" />
+      <module name="FoodMicroservice" target="17" />
       <module name="Library" target="19" />
       <module name="untitled" target="19" />
     </bytecodeTargetLevel>
