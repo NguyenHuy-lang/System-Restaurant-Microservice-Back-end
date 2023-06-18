@@ -1,0 +1,9 @@
+docker pull mysql
+mkdir ~/mysql-restaurant-volume
+docker build -t mysql-restaurant-image .
+docker run -d -p 3030:3306 --name mysql-restaurant mysql-restaurant-image
+docker ps
+
+docker stop mysql-restaurant
+
+docker rm mysql-restaurant

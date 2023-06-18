@@ -10,7 +10,9 @@
         <module name="TableMicroservice" />
         <module name="OrderMicroservice" />
         <module name="FoodMicroservice" />
+        <module name="FoodMIcro" />
         <module name="UserMicroservice" />
+        <module name="RestaurantEurekaService" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -18,5 +20,11 @@
       <module name="Library" target="19" />
       <module name="untitled" target="19" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="FoodMIcro" options="-parameters" />
+      <module name="RestaurantEurekaService" options="-parameters" />
+    </option>
   </component>
 </project>
