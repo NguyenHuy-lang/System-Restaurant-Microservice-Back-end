@@ -1,7 +1,7 @@
-package com.micro.app.foodmicro.repositories;
+package com.micro.app.repositories;
 
 
-import com.micro.app.foodmicro.model.Food;
+import com.micro.app.model.Food;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

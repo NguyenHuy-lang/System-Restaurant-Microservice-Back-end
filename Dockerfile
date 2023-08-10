@@ -6,6 +6,7 @@ FROM mysql
 # Set the root password for the MySQL server
 ENV MYSQL_ROOT_PASSWORD=root
 
+COPY ./init.sql /docker-entrypoint-initdb.d/
 # Copy custom configuration file (optional)
 # COPY my.cnf /etc/mysql/my.cnf
 # Create a directory for data persistence

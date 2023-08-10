@@ -7,9 +7,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="FoodMicro" />
         <module name="TableMicroservice" />
+        <module name="TableMicro" />
         <module name="OrderMicroservice" />
-        <module name="FoodMIcro" />
         <module name="UserMicroservice" />
         <module name="RestaurantEurekaService" />
       </profile>
@@ -23,8 +24,9 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="FoodMIcro" options="-parameters" />
+      <module name="FoodMicro" options="-parameters" />
       <module name="RestaurantEurekaService" options="-parameters" />
+      <module name="TableMicro" options="-parameters" />
     </option>
   </component>
 </project>

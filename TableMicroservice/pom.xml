@@ -42,6 +42,9 @@
     </dependencies>
 
     <build>
+
+        <sourceDirectory>src</sourceDirectory>
+
         <plugins>
             <!-- Flyway plugin -->
             <plugin>

@@ -1,0 +1,11 @@
+version: '3'
+services:
+  food_service:
+    image: ducanh3122001/ducapu_food_service
+    build:
+      context: ./FoodMicro
+      dockerfile: Dockerfile
+    ports:
+      - 8082:8082
+    depends_on:
+      - restaurant_mysql_server

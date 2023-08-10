@@ -1,4 +1,4 @@
-package com.micro.app.foodmicro.model;
+package com.micro.app.model;
 
 
 import lombok.AllArgsConstructor;

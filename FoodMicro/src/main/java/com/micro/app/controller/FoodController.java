@@ -1,8 +1,8 @@
-package com.micro.app.foodmicro.controller;
+package com.micro.app.controller;
 
 
-import com.micro.app.foodmicro.model.Food;
-import com.micro.app.foodmicro.repositories.FoodRepository;
+import com.micro.app.model.Food;
+import com.micro.app.repositories.FoodRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

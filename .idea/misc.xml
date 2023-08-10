@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/RestaurantEurekaService/pom.xml" />
         <option value="$PROJECT_DIR$/FoodMIcro/pom.xml" />
         <option value="$PROJECT_DIR$/FoodMicroservice/pom.xml" />
+        <option value="$PROJECT_DIR$/TableMicro/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
